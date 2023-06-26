@@ -7,16 +7,39 @@ namespace SaveVault.Controllers;
 public class UploadController : ControllerBase
 {
 	private readonly ILogger<UploadController> _logger;
+	private readonly IUploadService _uploadService;
 
-	public UploadController(ILogger<UploadController> logger)
+	public UploadController(ILogger<UploadController> logger, IUploadService uploadService)
 	{
 		_logger = logger;
+		_uploadService = uploadService;
 	}
 
-	[HttpPost("UploadPC")]
-	public IActionResult Post([FromBody] PCSave save)
+	[HttpPost("PC")]
+	public IActionResult UploadPC([FromBody] PCSave save)
 	{
-		_logger.LogInformation("Post realizado");
-		return Ok();
+		try
+		{
+			_uploadService.Upload(save);
+			return Ok();
+		}
+		catch (Exception exception)
+		{
+			return BadRequest(exception);
+		}
+	}
+
+	[HttpPost("Mobile")]
+	public IActionResult UploadMobile([FromBody] MobileSave save)
+	{
+		try
+		{
+			_uploadService.Upload(save);
+			return Ok();
+		}
+		catch (Exception exception)
+		{
+			return BadRequest(exception);
+		}
 	}
 }

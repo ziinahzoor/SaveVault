@@ -1,7 +1,7 @@
 public enum Platform
 {
 	PC,
-	PlayStation4,
+	Mobile,
 }
 
 public class PlatformData
@@ -13,7 +13,7 @@ public class PlatformData
 
 	};
 
-	public static PlatformData PlayStation4 = new PlatformData()
+	public static PlatformData Mobile = new PlatformData()
 	{
 
 	};

@@ -9,6 +9,12 @@ builder.Services.AddLogging(logging =>
 	logging.AddDebug();
 });
 
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IGameService, GameService>();
+builder.Services.AddScoped<IConversionService, ConversionService>();
+builder.Services.AddScoped<IUploadService, UploadService>();
+builder.Services.AddScoped<IDownloadService, DownloadService>();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
