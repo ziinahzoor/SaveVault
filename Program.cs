@@ -15,6 +15,10 @@ builder.Services.AddScoped<IConversionService, ConversionService>();
 builder.Services.AddScoped<IUploadService, UploadService>();
 builder.Services.AddScoped<IDownloadService, DownloadService>();
 
+builder.Services.AddScoped<IUploadRepository, UploadRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IGameRepository, GameRepository>();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())

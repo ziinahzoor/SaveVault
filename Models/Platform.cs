@@ -1,7 +1,8 @@
 public enum Platform
 {
 	PC,
-	Mobile,
+	Android,
+	iOS
 }
 
 public class PlatformData
@@ -10,11 +11,20 @@ public class PlatformData
 
 	public static PlatformData PC = new PlatformData()
 	{
-
 	};
 
-	public static PlatformData Mobile = new PlatformData()
+	public static PlatformData Android = new PlatformData()
 	{
+	};
 
+	public static PlatformData iOS = new PlatformData()
+	{
+	};
+
+	public static PlatformData GetPlatform(string platform) => platform switch
+	{
+		"PC" => PC,
+		"Android" => Android,
+		_ => iOS
 	};
 }

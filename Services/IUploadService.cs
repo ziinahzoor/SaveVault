@@ -1,4 +1,4 @@
 public interface IUploadService
 {
-	public void Upload(ISave save);
+	public void Upload(UniversalSave save);
 }

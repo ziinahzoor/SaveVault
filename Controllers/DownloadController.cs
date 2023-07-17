@@ -25,57 +25,59 @@ public class DownloadController : ControllerBase
 		_conversionService = conversionService;
 	}
 
-	[HttpGet("GetAll")]
-	public IActionResult GetAll(Platform targetPlatform, Guid gameId, Guid userId)
-	{
-		try
-		{
-			var user = _userService.GetById(userId);
-			var game = _gameService.GetById(gameId);
-			var saves = _downloadService.GetAllSaves(game, user);
-			var convertedSaves = _conversionService.ConvertAll<ISave, ISave>(saves);
+	// [HttpGet("GetAll")]
+	// public IActionResult GetAll(Platform targetPlatform, Guid gameId, Guid userId)
+	// {
+	// 	try
+	// 	{
+	// 		var user = _userService.GetById(userId);
+	// 		var game = _gameService.GetById(gameId);
+	// 		var saves = _downloadService.GetAllSaves(game, user);
+	// 		var convertedSaves = _conversionService.ConvertAll<ISave, ISave>(saves);
 
-			return Ok(convertedSaves);
-		}
-		catch (Exception exception)
-		{
-			return BadRequest(exception);
-		}
-	}
+	// 		return Ok(convertedSaves);
+	// 	}
+	// 	catch (Exception exception)
+	// 	{
+	// 		return BadRequest(exception);
+	// 	}
+	// }
 
 
-	[HttpGet("GetById")]
-	public IActionResult GetById(Platform targetPlatform, Guid saveId, Guid userId)
-	{
-		try
-		{
-			var user = _userService.GetById(userId);
-			var save = _downloadService.GetById(saveId, user);
-			var convertedSave = _conversionService.Convert<ISave, ISave>(save);
+	// [HttpGet("GetById")]
+	// public IActionResult GetById(Platform targetPlatform, Guid saveId, Guid userId)
+	// {
+	// 	try
+	// 	{
+	// 		var user = _userService.GetById(userId);
+	// 		var save = _downloadService.GetById(saveId, user);
 
-			return Ok(convertedSave);
-		}
-		catch (Exception exception)
-		{
-			return BadRequest(exception);
-		}
-	}
+	// 		PCSave targetSave;
+	// 		var convertedSave = _conversionService.Convert(save, out targetSave);
 
-	[HttpGet("GetLatest")]
-	public IActionResult GetLatest(Platform targetPlatform, Guid gameId, Guid userId)
-	{
-		try
-		{
-			var user = _userService.GetById(userId);
-			var game = _gameService.GetById(gameId);
-			var save = _downloadService.GetLatest(game, user);
-			var convertedSave = _conversionService.Convert<ISave, ISave>(save);
+	// 		return Ok(convertedSave);
+	// 	}
+	// 	catch (Exception exception)
+	// 	{
+	// 		return BadRequest(exception);
+	// 	}
+	// }
 
-			return Ok(convertedSave);
-		}
-		catch (Exception exception)
-		{
-			return BadRequest(exception);
-		}
-	}
+	// [HttpGet("GetLatest")]
+	// public IActionResult GetLatest(Platform targetPlatform, Guid gameId, Guid userId)
+	// {
+	// 	try
+	// 	{
+	// 		var user = _userService.GetById(userId);
+	// 		var game = _gameService.GetById(gameId);
+	// 		var save = _downloadService.GetLatest(game, user);
+	// 		var convertedSave = _conversionService.Convert<ISave, ISave>(save);
+
+	// 		return Ok(convertedSave);
+	// 	}
+	// 	catch (Exception exception)
+	// 	{
+	// 		return BadRequest(exception);
+	// 	}
+	// }
 }
