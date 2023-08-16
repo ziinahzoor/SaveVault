@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using SaveVault.Models;
 
-namespace SaveVault.Repositories;
+namespace SaveVault.Repositories.Implementation;
 
 public class DownloadRepository : IDownloadRepository
 {

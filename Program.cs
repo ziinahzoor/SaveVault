@@ -1,6 +1,8 @@
 using System.Text.Json.Serialization;
 using SaveVault.Repositories;
+using SaveVault.Repositories.Implementation;
 using SaveVault.Services;
+using SaveVault.Services.Implementation;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 

@@ -2,7 +2,7 @@ using System.Text.Json;
 using SaveVault.Helpers;
 using SaveVault.Models;
 
-namespace SaveVault.Services;
+namespace SaveVault.Services.Implementation;
 
 public class ConversionService : IConversionService
 {
