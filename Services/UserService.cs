@@ -1,3 +1,4 @@
+using SaveVault.Models;
 using SaveVault.Repositories;
 
 namespace SaveVault.Services;

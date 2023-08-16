@@ -6,7 +6,7 @@ public class UploadRepository : IUploadRepository
 {
 	public void Upload(UniversalSave save)
 	{
-		using var context = new AppDbContext();
+		using SaveVaultDbContext context = new();
 		if (!context.Saves.Select(x => x.Id).Contains(save.Id))
 		{
 			if (!context.Games.Select(x => x.Id).Contains(save.Game.Id))
@@ -19,9 +19,9 @@ public class UploadRepository : IUploadRepository
 				context.Users.Add(save.User);
 			}
 
-			var additionalContents = save.AccessedAdditionalContent.Select(a => a.AdditionalContent);
+			IEnumerable<AdditionalContent> additionalContents = save.AccessedAdditionalContent.Select(a => a.AdditionalContent);
 
-			foreach (var content in additionalContents)
+			foreach (AdditionalContent content in additionalContents)
 			{
 				if (!context.AdditionalContents.Select(x => x.Id).Contains(content.Id))
 				{

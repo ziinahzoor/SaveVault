@@ -15,29 +15,21 @@ public class ConversionService : IConversionService
 		_gameService = gameService;
 	}
 
-	public U Convert<T, U>(T save, Platform? platform = null)
-		where T : ISave
-		where U : ISave
+	public UniversalSave Convert(PlatformSave save)
 	{
-		if (typeof(T) == typeof(PlatformSave))
-		{
-			var platformSave = (PlatformSave)System.Convert.ChangeType(save, typeof(PlatformSave))!;
-			var additionalContent = platformSave.Game.AdditionalContents.Select(a => new AdditionalContentAccess(a, platformSave.AccessedContent.Contains(a.Id)));
-			var universalSave = new UniversalSave(platformSave.Game, platformSave.User, platformSave.Timestamp, additionalContent.ToList(), platformSave.Data);
+		IEnumerable<AdditionalContentAccess> additionalContent = save.Game.AdditionalContents
+			.Select(a => new AdditionalContentAccess(a, save.AccessedContent.Contains(a.Id)));
 
-			return (U)System.Convert.ChangeType(universalSave, typeof(U));
-		}
-		else
-		{
-			var universalSave = (UniversalSave)System.Convert.ChangeType(save, typeof(UniversalSave))!;
-			var additionalContent = universalSave.AccessedAdditionalContent
-				.Where(a => a.WasAccessed)
-				.Select(a => a.AdditionalContent.Id);
+		return new UniversalSave(save.Game, save.User, save.Timestamp, additionalContent.ToList(), save.Data);
+	}
 
-			var platformSave = new PlatformSave(universalSave.Game, universalSave.User, PlatformData.GetPlatform(platform.ToString()!), universalSave.Timestamp, additionalContent.ToList(), universalSave.Data, universalSave.Id);
-			return (U)System.Convert.ChangeType(platformSave, typeof(U));
+	public PlatformSave Convert(UniversalSave save, Platform platform)
+	{
+		IEnumerable<Guid> additionalContent = save.AccessedAdditionalContent
+			.Where(a => a.WasAccessed)
+			.Select(a => a.AdditionalContent.Id);
 
-		}
+		return new PlatformSave(save.Game, save.User, PlatformData.GetPlatform(platform.ToString()!), save.Timestamp, additionalContent.ToList(), save.Data, save.Id);
 	}
 
 	// public IEnumerable<U> ConvertAll<T, U>(IEnumerable<T> saves)
@@ -49,40 +41,43 @@ public class ConversionService : IConversionService
 
 	public T ConvertFromFile<T>(IFormFile file) where T : ISave
 	{
-		var saveString = SaveIOHelper.ReadUniversalFile(file);
-		var jsonString = SaveIOHelper.Serialize(saveString);
+		string saveString = SaveIOHelper.ReadFile(file);
+		string jsonString = SaveIOHelper.Serialize(saveString);
 
-		var jsonObject = JsonSerializer.Deserialize<Dictionary<string, dynamic>>(jsonString)!;
+		Dictionary<string, dynamic> jsonObject = JsonSerializer.Deserialize<Dictionary<string, dynamic>>(jsonString)!;
 
 		ISave save;
 
 		Guid? saveId = null;
-		if (jsonObject.TryGetValue("id", out dynamic? id))
+		if (jsonObject.TryGetValue("id", out dynamic id))
 		{
 			saveId = id.GetGuid();
 		}
-		var userId = jsonObject["user-id"].GetGuid();
-		var gameId = jsonObject["game-id"].GetGuid();
-		var user = _userService.GetById(userId);
-		var game = _gameService.GetById(gameId);
-		var time = jsonObject["timestamp"].GetDateTime();
+		Guid userId = jsonObject["user-id"].GetGuid();
+		Guid gameId = jsonObject["game-id"].GetGuid();
+		User user = _userService.GetById(userId);
+		Game game = _gameService.GetById(gameId);
+		DateTime time = jsonObject["timestamp"].GetDateTime();
 		List<Guid> accessedContent = new();
-		foreach (var content in jsonObject["accessed-content"].EnumerateArray())
+		foreach (dynamic content in jsonObject["accessed-content"].EnumerateArray())
 		{
 			accessedContent.Add(content.GetGuid());
 		}
-		var data = jsonObject["data"];
+		dynamic data = jsonObject["data"];
 
 		if (typeof(T) == typeof(PlatformSave))
 		{
-			var platform = PlatformData.GetPlatform(jsonObject["platform"].ToString());
+			PlatformData platform = PlatformData.GetPlatform(jsonObject["platform"].ToString());
 
 			save = new PlatformSave(game, user, platform, time, accessedContent, data, saveId);
 		}
 		else
 		{
-			throw new NotImplementedException();
-			// save = new UniversalSave(new Game(), new User());
+			IEnumerable<AdditionalContentAccess> content = game.AdditionalContents.Select(a =>
+				new AdditionalContentAccess(a, accessedContent.Contains(a.Id))
+			);
+
+			save = new UniversalSave(game, user, time, content.ToList(), data, saveId);
 		}
 
 		return (T)System.Convert.ChangeType(save, typeof(T));

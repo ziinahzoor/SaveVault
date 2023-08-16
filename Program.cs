@@ -1,9 +1,8 @@
 using System.Text.Json.Serialization;
-using Microsoft.EntityFrameworkCore;
 using SaveVault.Repositories;
 using SaveVault.Services;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services
 	.AddControllers()
@@ -28,7 +27,7 @@ builder.Services.AddScoped<IDownloadRepository, DownloadRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IGameRepository, GameRepository>();
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {

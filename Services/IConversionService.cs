@@ -4,9 +4,8 @@ namespace SaveVault.Services;
 
 public interface IConversionService
 {
-	U Convert<T, U>(T save, Platform? platform = null)
-		where T : ISave
-		where U : ISave;
+	UniversalSave Convert(PlatformSave save);
+	PlatformSave Convert(UniversalSave save, Platform platform);
 
 	// IEnumerable<U> ConvertAll<T, U>(IEnumerable<T> saves)
 	// 	where T : ISave

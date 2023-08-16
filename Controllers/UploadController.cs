@@ -26,8 +26,8 @@ public class UploadController : ControllerBase
 	{
 		try
 		{
-			var save = _conversionService.ConvertFromFile<PlatformSave>(file);
-			var universalSave = _conversionService.Convert<PlatformSave, UniversalSave>(save);
+			PlatformSave save = _conversionService.ConvertFromFile<PlatformSave>(file);
+			UniversalSave universalSave = _conversionService.Convert(save);
 			_uploadService.Upload(universalSave);
 			return Ok();
 		}

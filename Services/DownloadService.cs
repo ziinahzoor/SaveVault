@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using SaveVault.Models;
 using SaveVault.Repositories;
 
@@ -12,7 +13,6 @@ public class DownloadService : IDownloadService
 		_downloadRepository = downloadRepository;
 	}
 
-
 	public IEnumerable<ISave> GetAllSaves(Game game, User user)
 	{
 		throw new NotImplementedException();
@@ -23,8 +23,7 @@ public class DownloadService : IDownloadService
 		throw new NotImplementedException();
 	}
 
-	public ISave GetLatest(Game game, User user)
-	{
-		return _downloadRepository.DownloadLatest(game, user);
-	}
+	public ISave GetLatest(Game game, User user) => _downloadRepository.DownloadLatest(game, user);
+
+	public SVFile CreatePlatformFile(string fileName, string content) => SVFile.CreatePlatformSaveFile(fileName, content);
 }

@@ -13,7 +13,6 @@ public class AdditionalContentAccess
 		AdditionalContent = additionalContent;
 		WasAccessed = wasAccessed ?? false;
 		Id = id ?? Guid.NewGuid();
-
 	}
 
 	public Guid Id { get; set; }

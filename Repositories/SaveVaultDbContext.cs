@@ -1,15 +1,11 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SaveVault.Models;
 
 namespace SaveVault.Repositories;
 
-public class AppDbContext : DbContext
-
-
+public class SaveVaultDbContext : DbContext
 {
-
-
-
 	public DbSet<UniversalSave> Saves { get; set; }
 	public DbSet<Game> Games { get; set; }
 	public DbSet<AdditionalContent> AdditionalContents { get; set; }
@@ -22,7 +18,7 @@ public class AppDbContext : DbContext
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
-		var saveModel = modelBuilder.Entity<UniversalSave>();
+		EntityTypeBuilder<UniversalSave> saveModel = modelBuilder.Entity<UniversalSave>();
 
 		saveModel.HasOne(u => u.User);
 		saveModel.HasOne(u => u.Game);
