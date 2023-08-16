@@ -1,3 +1,7 @@
+using SaveVault.Models;
+
+namespace SaveVault.Services;
+
 public interface IConversionService
 {
 	U Convert<T, U>(T save)

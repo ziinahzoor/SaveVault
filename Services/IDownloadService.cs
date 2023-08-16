@@ -1,3 +1,7 @@
+using SaveVault.Models;
+
+namespace SaveVault.Services;
+
 public interface IDownloadService
 {
 	IEnumerable<ISave> GetAllSaves(Game game, User user);

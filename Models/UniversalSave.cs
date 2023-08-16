@@ -1,3 +1,5 @@
+namespace SaveVault.Models;
+
 public class UniversalSave : ISave
 {
 	public UniversalSave(Game game, User user, DateTime timestamp, Dictionary<AdditionalContent, bool> accessedAdditionalContent, dynamic data, Guid? id = null)

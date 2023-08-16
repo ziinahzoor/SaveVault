@@ -1,3 +1,5 @@
+namespace SaveVault.Models;
+
 public class PlatformSave : ISave
 {
 	public PlatformSave(Game game, User user, PlatformData platform, DateTime timestamp, List<Guid> accessedContent, dynamic data, Guid? id = null)

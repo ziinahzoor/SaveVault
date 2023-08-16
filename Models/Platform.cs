@@ -1,3 +1,5 @@
+namespace SaveVault.Models;
+
 public enum Platform
 {
 	PC,
@@ -9,15 +11,15 @@ public class PlatformData
 {
 	private PlatformData() { }
 
-	public static PlatformData PC = new PlatformData()
+	public static PlatformData PC = new()
 	{
 	};
 
-	public static PlatformData Android = new PlatformData()
+	public static PlatformData Android = new()
 	{
 	};
 
-	public static PlatformData iOS = new PlatformData()
+	public static PlatformData iOS = new()
 	{
 	};
 

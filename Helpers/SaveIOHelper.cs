@@ -1,5 +1,8 @@
 using System.Text;
 using System.Text.RegularExpressions;
+using SaveVault.Models;
+
+namespace SaveVault.Helpers;
 
 public static class SaveIOHelper
 {
@@ -26,7 +29,7 @@ public static class SaveIOHelper
 		builder.Append($"additional-content = [\n");
 		foreach (var additionalContent in save.AccessedAdditionalContent)
 		{
-			builder.Append($"\t{{\n\t\tid = '{additionalContent.Key}',\n\t\taccessed = {additionalContent.Value.ToString().ToLower()}\n\t}}");
+			builder.Append($"\t{{\n\t\tid = '{additionalContent.Key.Id}',\n\t\taccessed = {additionalContent.Value.ToString().ToLower()}\n\t}}");
 			if (additionalContent.Key != save.AccessedAdditionalContent.Last().Key)
 			{
 				builder.Append($",\n");
@@ -61,17 +64,13 @@ public static class SaveIOHelper
 
 	public static void WritePlatformFile(string json)
 	{
-		using (StreamWriter outputFile = new StreamWriter(Path.Combine(@"D:\dev\SaveVault\Examples", "test.psav")))
-		{
-			outputFile.WriteLine(json);
-		}
+		using StreamWriter outputFile = new(Path.Combine(@"D:\dev\SaveVault\Examples", "test.psav"));
+		outputFile.WriteLine(json);
 	}
 
 	public static void WriteUniversalFile(string usav)
 	{
-		using (StreamWriter outputFile = new StreamWriter(Path.Combine(@"D:\dev\SaveVault\Examples", "test.usav")))
-		{
-			outputFile.WriteLine(usav);
-		}
+		using StreamWriter outputFile = new(Path.Combine(@"D:\dev\SaveVault\Examples", "test.usav"));
+		outputFile.WriteLine(usav);
 	}
 }

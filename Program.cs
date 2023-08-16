@@ -1,3 +1,6 @@
+using SaveVault.Repositories;
+using SaveVault.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();

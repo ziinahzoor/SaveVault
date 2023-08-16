@@ -1,3 +1,8 @@
+using SaveVault.Models;
+using SaveVault.Repositories;
+
+namespace SaveVault.Services;
+
 public class GameService : IGameService
 {
 	private readonly IGameRepository _gameRepository;

@@ -1,3 +1,7 @@
+using SaveVault.Repositories;
+
+namespace SaveVault.Services;
+
 public class UserService : IUserService
 {
 	private readonly IUserRepository _userRepository;

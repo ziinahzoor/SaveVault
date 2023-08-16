@@ -1,4 +1,8 @@
 using System.Text.Json;
+using SaveVault.Helpers;
+using SaveVault.Models;
+
+namespace SaveVault.Services;
 
 public class ConversionService : IConversionService
 {
