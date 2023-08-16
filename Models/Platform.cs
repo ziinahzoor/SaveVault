@@ -9,17 +9,22 @@ public enum Platform
 
 public class PlatformData
 {
-	private PlatformData() { }
+	private PlatformData(Platform platform)
+	{
+		Name = platform;
+	}
 
-	public static PlatformData PC = new()
+	public Platform Name { get; set; }
+
+	public static readonly PlatformData PC = new(Platform.PC)
 	{
 	};
 
-	public static PlatformData Android = new()
+	public static readonly PlatformData Android = new(Platform.Android)
 	{
 	};
 
-	public static PlatformData iOS = new()
+	public static readonly PlatformData iOS = new(Platform.iOS)
 	{
 	};
 

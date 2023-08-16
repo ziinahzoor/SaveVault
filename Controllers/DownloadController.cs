@@ -1,4 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using SaveVault.Helpers;
+using SaveVault.Models;
+using SaveVault.Services;
 
 namespace SaveVault.Controllers;
 
@@ -24,6 +27,32 @@ public class DownloadController : ControllerBase
 		_downloadService = downloadService;
 		_conversionService = conversionService;
 	}
+
+	[HttpPost("Latest")]
+	public IActionResult GetLatest([FromBody] QueryDto query)
+	{
+		try
+		{
+			User user = _userService.GetById(query.UserId);
+			Game game = _gameService.GetById(query.GameId);
+
+			UniversalSave save = (UniversalSave)_downloadService.GetLatest(game, user);
+
+			var platformSave = _conversionService.Convert<UniversalSave, PlatformSave>(save, query.TargetPlatform);
+			var saveString = SaveIOHelper.Deserialize(platformSave);
+
+			byte[] fileBytes = System.Text.Encoding.UTF8.GetBytes(saveString);
+			string contentType = "application/octet-stream";
+			string fileName = $"{platformSave.Id}.psav";
+
+			return File(fileBytes, contentType, fileName);
+		}
+		catch (Exception exception)
+		{
+			return BadRequest(exception);
+		}
+	}
+
 
 	// [HttpGet("GetAll")]
 	// public IActionResult GetAll(Platform targetPlatform, Guid gameId, Guid userId)

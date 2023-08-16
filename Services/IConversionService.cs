@@ -4,7 +4,7 @@ namespace SaveVault.Services;
 
 public interface IConversionService
 {
-	U Convert<T, U>(T save)
+	U Convert<T, U>(T save, Platform? platform = null)
 		where T : ISave
 		where U : ISave;
 

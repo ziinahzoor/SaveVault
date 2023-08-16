@@ -15,21 +15,28 @@ public class ConversionService : IConversionService
 		_gameService = gameService;
 	}
 
-	public U Convert<T, U>(T save)
+	public U Convert<T, U>(T save, Platform? platform = null)
 		where T : ISave
 		where U : ISave
 	{
 		if (typeof(T) == typeof(PlatformSave))
 		{
 			var platformSave = (PlatformSave)System.Convert.ChangeType(save, typeof(PlatformSave))!;
-			var additionalContent = platformSave.Game.AdditionalContents.ToDictionary(t => t, t => platformSave.AccessedContent.Contains(t.Id));
-			var universalSave = new UniversalSave(platformSave.Game, platformSave.User, platformSave.Timestamp, additionalContent, platformSave.Data);
+			var additionalContent = platformSave.Game.AdditionalContents.Select(a => new AdditionalContentAccess(a, platformSave.AccessedContent.Contains(a.Id)));
+			var universalSave = new UniversalSave(platformSave.Game, platformSave.User, platformSave.Timestamp, additionalContent.ToList(), platformSave.Data);
 
 			return (U)System.Convert.ChangeType(universalSave, typeof(U));
 		}
 		else
 		{
-			throw new NotImplementedException();
+			var universalSave = (UniversalSave)System.Convert.ChangeType(save, typeof(UniversalSave))!;
+			var additionalContent = universalSave.AccessedAdditionalContent
+				.Where(a => a.WasAccessed)
+				.Select(a => a.AdditionalContent.Id);
+
+			var platformSave = new PlatformSave(universalSave.Game, universalSave.User, PlatformData.GetPlatform(platform.ToString()!), universalSave.Timestamp, additionalContent.ToList(), universalSave.Data, universalSave.Id);
+			return (U)System.Convert.ChangeType(platformSave, typeof(U));
+
 		}
 	}
 
@@ -59,7 +66,7 @@ public class ConversionService : IConversionService
 		var user = _userService.GetById(userId);
 		var game = _gameService.GetById(gameId);
 		var time = jsonObject["timestamp"].GetDateTime();
-		List<Guid> accessedContent = new List<Guid>();
+		List<Guid> accessedContent = new();
 		foreach (var content in jsonObject["accessed-content"].EnumerateArray())
 		{
 			accessedContent.Add(content.GetGuid());
