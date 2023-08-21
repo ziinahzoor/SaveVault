@@ -12,8 +12,5 @@ public class UploadService : IUploadService
 		_uploadRepository = uploadRepository;
 	}
 
-	public void Upload(UniversalSave save)
-	{
-		_uploadRepository.Upload(save);
-	}
+	public void Upload(UniversalSave save) => _uploadRepository.Upload(save);
 }

@@ -32,13 +32,6 @@ public class ConversionService : IConversionService
 		return new PlatformSave(save.Game, save.User, PlatformData.GetPlatform(platform.ToString()!), save.Timestamp, additionalContent.ToList(), save.Data, save.Id);
 	}
 
-	// public IEnumerable<U> ConvertAll<T, U>(IEnumerable<T> saves)
-	// 	where T : ISave
-	// 	where U : ISave
-	// {
-	// 	throw new NotImplementedException();
-	// }
-
 	public T ConvertFromFile<T>(IFormFile file) where T : ISave
 	{
 		string saveString = SaveIOHelper.ReadFile(file);

@@ -22,13 +22,17 @@ public class UploadController : ControllerBase
 	}
 
 	[HttpPost]
-	public IActionResult Upload(IFormFile file)
+	public IActionResult Upload([FromForm] List<IFormFile> files)
 	{
 		try
 		{
-			PlatformSave save = _conversionService.ConvertFromFile<PlatformSave>(file);
-			UniversalSave universalSave = _conversionService.Convert(save);
-			_uploadService.Upload(universalSave);
+			foreach (IFormFile file in files)
+			{
+				PlatformSave save = _conversionService.ConvertFromFile<PlatformSave>(file);
+				UniversalSave universalSave = _conversionService.Convert(save);
+				_uploadService.Upload(universalSave);
+			}
+
 			return Ok();
 		}
 		catch (Exception exception)
