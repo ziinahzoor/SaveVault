@@ -22,15 +22,15 @@ public class UploadController : ControllerBase
 	}
 
 	[HttpPost]
-	public IActionResult Upload([FromForm] List<IFormFile> files)
+	public async Task<IActionResult> Upload([FromForm] List<IFormFile> files)
 	{
 		try
 		{
 			foreach (IFormFile file in files)
 			{
-				PlatformSave save = _conversionService.ConvertFromFile<PlatformSave>(file);
+				PlatformSave save = await _conversionService.ConvertFromFile<PlatformSave>(file);
 				UniversalSave universalSave = _conversionService.Convert(save);
-				_uploadService.Upload(universalSave);
+				await _uploadService.Upload(universalSave);
 			}
 
 			return Ok();

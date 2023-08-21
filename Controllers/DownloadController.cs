@@ -29,14 +29,14 @@ public class DownloadController : ControllerBase
 	}
 
 	[HttpPost("Latest")]
-	public IActionResult GetLatest([FromBody] QueryDto query)
+	public async Task<IActionResult> GetLatest([FromBody] QueryDto query)
 	{
 		try
 		{
-			User user = _userService.GetById(query.UserId);
-			Game game = _gameService.GetById(query.GameId);
+			User user = await _userService.GetById(query.UserId);
+			Game game = await _gameService.GetById(query.GameId);
 
-			UniversalSave save = (UniversalSave)_downloadService.DownloadLatest(game, user);
+			UniversalSave save = (UniversalSave)await _downloadService.DownloadLatest(game, user);
 
 			if (save == null)
 			{
@@ -54,14 +54,14 @@ public class DownloadController : ControllerBase
 	}
 
 	[HttpPost("All")]
-	public IActionResult GetAll([FromBody] QueryDto query)
+	public async Task<IActionResult> GetAll([FromBody] QueryDto query)
 	{
 		try
 		{
-			User user = _userService.GetById(query.UserId);
-			Game game = _gameService.GetById(query.GameId);
+			User user = await _userService.GetById(query.UserId);
+			Game game = await _gameService.GetById(query.GameId);
 
-			IEnumerable<UniversalSave> saves = (IEnumerable<UniversalSave>)_downloadService.DownloadAllSaves(game, user);
+			IEnumerable<UniversalSave> saves = (IEnumerable<UniversalSave>)await _downloadService.DownloadAllSaves(game, user);
 
 			if (!saves.Any())
 			{
@@ -91,11 +91,11 @@ public class DownloadController : ControllerBase
 
 
 	[HttpGet("ById")]
-	public IActionResult GetById([FromBody] QueryDto query)
+	public async Task<IActionResult> GetById([FromBody] QueryDto query)
 	{
 		try
 		{
-			UniversalSave save = (UniversalSave)_downloadService.DownloadById(query.SaveId);
+			UniversalSave save = (UniversalSave)await _downloadService.DownloadById(query.SaveId);
 
 			if (save == null)
 			{

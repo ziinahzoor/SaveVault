@@ -4,5 +4,5 @@ namespace SaveVault.Services;
 
 public interface IUserService
 {
-	User GetById(Guid userId);
+	Task<User> GetById(Guid userId);
 }

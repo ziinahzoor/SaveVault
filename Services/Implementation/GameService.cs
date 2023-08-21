@@ -12,8 +12,8 @@ public class GameService : IGameService
 		_gameRepository = gameRepository;
 	}
 
-	public Game GetById(Guid gameId)
+	public async Task<Game> GetById(Guid gameId)
 	{
-		return _gameRepository.GetById(gameId);
+		return await _gameRepository.GetById(gameId);
 	}
 }

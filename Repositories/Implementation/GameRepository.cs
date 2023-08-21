@@ -4,7 +4,7 @@ namespace SaveVault.Repositories.Implementation;
 
 public class GameRepository : IGameRepository
 {
-	public Game GetById(Guid gameId)
+	public async Task<Game> GetById(Guid gameId)
 	{
 		//Remover mock depois
 		return new Game(gameId)

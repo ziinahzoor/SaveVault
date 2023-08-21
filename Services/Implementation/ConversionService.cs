@@ -32,7 +32,7 @@ public class ConversionService : IConversionService
 		return new PlatformSave(save.Game, save.User, PlatformData.GetPlatform(platform.ToString()!), save.Timestamp, additionalContent.ToList(), save.Data, save.Id);
 	}
 
-	public T ConvertFromFile<T>(IFormFile file) where T : ISave
+	public async Task<T> ConvertFromFile<T>(IFormFile file) where T : ISave
 	{
 		string saveString = SaveIOHelper.ReadFile(file);
 		string jsonString = SaveIOHelper.Serialize(saveString);
@@ -48,8 +48,8 @@ public class ConversionService : IConversionService
 		}
 		Guid userId = jsonObject["user-id"].GetGuid();
 		Guid gameId = jsonObject["game-id"].GetGuid();
-		User user = _userService.GetById(userId);
-		Game game = _gameService.GetById(gameId);
+		User user = await _userService.GetById(userId);
+		Game game = await _gameService.GetById(gameId);
 		DateTime time = jsonObject["timestamp"].GetDateTime();
 		List<Guid> accessedContent = new();
 		foreach (dynamic content in jsonObject["accessed-content"].EnumerateArray())

@@ -4,5 +4,5 @@ namespace SaveVault.Repositories;
 
 public interface IGameRepository
 {
-	Game GetById(Guid gameId);
+	Task<Game> GetById(Guid gameId);
 }

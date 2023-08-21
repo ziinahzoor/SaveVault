@@ -4,5 +4,5 @@ namespace SaveVault.Repositories;
 
 public interface IUserRepository
 {
-	User GetById(Guid userId);
+	Task<User> GetById(Guid userId);
 }

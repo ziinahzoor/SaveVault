@@ -4,5 +4,5 @@ namespace SaveVault.Services;
 
 public interface IGameService
 {
-	Game GetById(Guid gameId);
+	Task<Game> GetById(Guid gameId);
 }

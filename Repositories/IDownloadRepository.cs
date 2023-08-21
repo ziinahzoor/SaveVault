@@ -4,7 +4,7 @@ namespace SaveVault.Repositories;
 
 public interface IDownloadRepository
 {
-	ISave DownloadLatest(Game game, User user);
-	IEnumerable<ISave> DownloadAll(Game game, User user);
-	ISave DownloadById(Guid saveId);
+	Task<ISave> DownloadLatest(Game game, User user);
+	Task<IEnumerable<ISave>> DownloadAll(Game game, User user);
+	Task<ISave> DownloadById(Guid saveId);
 }

@@ -1,36 +1,41 @@
+using Microsoft.EntityFrameworkCore;
 using SaveVault.Models;
 
 namespace SaveVault.Repositories.Implementation;
 
 public class UploadRepository : IUploadRepository
 {
-	public void Upload(UniversalSave save)
+	private readonly SaveVaultDbContext _dbContext;
+
+	public UploadRepository(SaveVaultDbContext dbContext)
 	{
-		using SaveVaultDbContext context = new();
-		if (!context.Saves.Select(x => x.Id).Contains(save.Id))
+		_dbContext = dbContext;
+	}
+
+	public async Task Upload(UniversalSave save)
+	{
+		if (!_dbContext.CompleteSaves.Select(x => x.Id).Contains(save.Id))
 		{
-			if (!context.Games.Select(x => x.Id).Contains(save.Game.Id))
+			if (_dbContext.Games.Select(x => x.Id).Contains(save.Game.Id))
 			{
-				context.Games.Add(save.Game);
+				_dbContext.Entry(save.Game).State = EntityState.Detached;
 			}
 
-			if (!context.Users.Select(x => x.Id).Contains(save.User.Id))
+			if (_dbContext.Users.Select(x => x.Id).Contains(save.User.Id))
 			{
-				context.Users.Add(save.User);
+				_dbContext.Entry(save.User).State = EntityState.Detached;
 			}
 
-			IEnumerable<AdditionalContent> additionalContents = save.AccessedAdditionalContent.Select(a => a.AdditionalContent);
-
-			foreach (AdditionalContent content in additionalContents)
+			foreach (AdditionalContentAccess content in save.AccessedAdditionalContent)
 			{
-				if (!context.AdditionalContents.Select(x => x.Id).Contains(content.Id))
+				if (_dbContext.AdditionalContents.Select(x => x.Id).Contains(content.AdditionalContent.Id))
 				{
-					context.AdditionalContents.Add(content);
+					_dbContext.Entry(content.AdditionalContent).State = EntityState.Detached;
 				}
 			}
 
-			context.Saves.Add(save);
-			context.SaveChanges();
+			await _dbContext.Saves.AddAsync(save);
+			await _dbContext.SaveChangesAsync();
 		}
 	}
 }

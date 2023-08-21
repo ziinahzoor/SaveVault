@@ -4,5 +4,5 @@ namespace SaveVault.Services;
 
 public interface IUploadService
 {
-	void Upload(UniversalSave save);
+	Task Upload(UniversalSave save);
 }
