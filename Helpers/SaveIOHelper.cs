@@ -26,6 +26,11 @@ public static class SaveIOHelper
 		return reader.ReadToEnd();
 	}
 
+	public static string ReadFile(MemoryStream file)
+	{
+		return Encoding.UTF8.GetString(file.ToArray());
+	}
+
 	public static void WritePlatformFile(string psav)
 	{
 		using StreamWriter outputFile = new(Path.Combine(@"D:\dev\SaveVault\Examples", "test.psav"));
