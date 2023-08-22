@@ -1,9 +1,12 @@
+using Google.Cloud.Firestore;
+using Google.Cloud.Storage.V1;
 using System.Text.Json.Serialization;
-using Microsoft.EntityFrameworkCore;
 using SaveVault.Repositories;
 using SaveVault.Repositories.Implementation;
 using SaveVault.Services;
 using SaveVault.Services.Implementation;
+
+Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", "save-vault-gac.json");
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -19,9 +22,6 @@ builder.Services.AddLogging(logging =>
 	logging.AddDebug();
 });
 
-builder.Services.AddDbContext<SaveVaultDbContext>(options =>
-	options.UseInMemoryDatabase("InMemoryDb"));
-
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<IConversionService, ConversionService>();
@@ -32,6 +32,9 @@ builder.Services.AddScoped<IUploadRepository, UploadRepository>();
 builder.Services.AddScoped<IDownloadRepository, DownloadRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IGameRepository, GameRepository>();
+builder.Services.AddScoped<IFirebaseRepository, FirebaseRepository>();
+builder.Services.AddSingleton(provider => FirestoreDb.Create("save-vault"));
+builder.Services.AddSingleton(provider => StorageClient.Create());
 
 WebApplication app = builder.Build();
 

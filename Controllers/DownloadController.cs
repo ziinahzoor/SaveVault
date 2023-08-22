@@ -33,7 +33,7 @@ public class DownloadController : ControllerBase
 	{
 		try
 		{
-			User user = await _userService.GetById(query.UserId);
+			User user = _userService.GetById(query.UserId);
 			Game game = await _gameService.GetById(query.GameId);
 
 			UniversalSave save = (UniversalSave)await _downloadService.DownloadLatest(game, user);
@@ -58,7 +58,7 @@ public class DownloadController : ControllerBase
 	{
 		try
 		{
-			User user = await _userService.GetById(query.UserId);
+			User user = _userService.GetById(query.UserId);
 			Game game = await _gameService.GetById(query.GameId);
 
 			IEnumerable<UniversalSave> saves = (IEnumerable<UniversalSave>)await _downloadService.DownloadAllSaves(game, user);
@@ -68,16 +68,16 @@ public class DownloadController : ControllerBase
 				return NotFound();
 			}
 
-			using var outputStream = new MemoryStream();
-			using var archive = new ZipArchive(outputStream, ZipArchiveMode.Create, true);
+			using MemoryStream outputStream = new();
+			using ZipArchive archive = new(outputStream, ZipArchiveMode.Create, true);
 
-			foreach (var save in saves)
+			foreach (UniversalSave save in saves)
 			{
 				PlatformSave platformSave = _conversionService.Convert(save, query.TargetPlatform);
 				SVFile file = _downloadService.CreatePlatformFile(platformSave.Id.ToString(), platformSave.ToFileString());
 
-				var file1 = archive.CreateEntry(file.Name);
-				using var binaryWriter = new BinaryWriter(file1.Open());
+				ZipArchiveEntry file1 = archive.CreateEntry(file.Name);
+				using BinaryWriter binaryWriter = new(file1.Open());
 				binaryWriter.Write(file.Content);
 			}
 

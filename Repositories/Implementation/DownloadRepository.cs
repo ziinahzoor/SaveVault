@@ -1,26 +1,33 @@
+using Google.Cloud.Firestore;
 using SaveVault.Models;
 
 namespace SaveVault.Repositories.Implementation;
 
 public class DownloadRepository : IDownloadRepository
 {
-	private readonly SaveVaultDbContext _dbContext;
+	private readonly IFirebaseRepository _firebaseRepository;
 
-	public DownloadRepository(SaveVaultDbContext dbContext)
+	public DownloadRepository(IFirebaseRepository firebaseRepository)
 	{
-		_dbContext = dbContext;
+		_firebaseRepository = firebaseRepository;
 	}
 
-	public async Task<ISave> DownloadLatest(Game game, User user)
+	public async Task<MemoryStream> DownloadLatest(Game game, User user)
 	{
-		return (await DownloadAll(game, user)).FirstOrDefault();
+		QuerySnapshot saveSnapshot = await _firebaseRepository.GetSaves(user, game)
+			.OrderByDescending("timestamp")
+			.Limit(1)
+			.GetSnapshotAsync();
+
+		DocumentSnapshot save = saveSnapshot[0];
+
+		return await _firebaseRepository.Download(save.Id.ToString());
 	}
 
 	public async Task<IEnumerable<ISave>> DownloadAll(Game game, User user)
 	{
-		return _dbContext.CompleteSaves
-			.Where(s => s.User.Id == user.Id && s.Game.Id == game.Id)
-			.OrderByDescending(s => s.Timestamp);
+		throw new NotImplementedException();
+
 	}
 
 	public async Task<ISave> DownloadById(Guid saveId)

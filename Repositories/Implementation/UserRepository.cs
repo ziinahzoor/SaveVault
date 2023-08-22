@@ -4,9 +4,16 @@ namespace SaveVault.Repositories.Implementation;
 
 public class UserRepository : IUserRepository
 {
-	public async Task<User> GetById(Guid userId)
+	private readonly IFirebaseRepository _firebaseRepository;
+
+	public UserRepository(IFirebaseRepository firebaseRepository)
 	{
-		//Remover mock depois
-		return new User(userId);
+		_firebaseRepository = firebaseRepository;
+	}
+
+	public User GetById(Guid userId)
+	{
+		string id = _firebaseRepository.GetUsers().Document(userId.ToString()).Id;
+		return new User(new Guid(id));
 	}
 }

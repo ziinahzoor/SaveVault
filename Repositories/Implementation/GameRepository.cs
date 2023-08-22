@@ -1,19 +1,32 @@
+using Google.Cloud.Firestore;
 using SaveVault.Models;
 
 namespace SaveVault.Repositories.Implementation;
 
 public class GameRepository : IGameRepository
 {
+	private readonly IFirebaseRepository _firebaseRepository;
+
+	public GameRepository(IFirebaseRepository firebaseRepository)
+	{
+		_firebaseRepository = firebaseRepository;
+	}
+
 	public async Task<Game> GetById(Guid gameId)
 	{
-		//Remover mock depois
-		return new Game(gameId)
+		string id = _firebaseRepository.GetGames().Document(gameId.ToString()).Id;
+		Game game = new(new Guid(id))
 		{
 			AdditionalContents = new List<AdditionalContent>()
-			{
-				new AdditionalContent(new Guid("23815979-e9c5-45df-9aa3-d8acd219996b")),
-				new AdditionalContent(new Guid("d1d5de9a-72b7-4ff8-9cf0-dbc743f39f33")),
-			}
 		};
+
+		CollectionReference dlcs = _firebaseRepository.GetAdditionalContent(game);
+		QuerySnapshot querySnapshot = await dlcs.GetSnapshotAsync();
+
+		game.AdditionalContents = querySnapshot.Documents
+			.Select(s => new AdditionalContent(new Guid(s.Id)))
+			.ToList();
+
+		return game;
 	}
 }

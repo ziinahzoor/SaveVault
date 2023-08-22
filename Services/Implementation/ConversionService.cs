@@ -47,7 +47,7 @@ public class ConversionService : IConversionService
 		}
 		Guid userId = jsonObject["user-id"].GetGuid();
 		Guid gameId = jsonObject["game-id"].GetGuid();
-		User user = await _userService.GetById(userId);
+		User user = _userService.GetById(userId);
 		Game game = await _gameService.GetById(gameId);
 		DateTime time = jsonObject["timestamp"].GetDateTime();
 
@@ -70,13 +70,13 @@ public class ConversionService : IConversionService
 		{
 			List<AdditionalContentAccess> accessedContent = new();
 
-			foreach (var content in jsonObject["additional-content"].EnumerateArray())
+			foreach (dynamic content in jsonObject["additional-content"].EnumerateArray())
 			{
 				Dictionary<string, dynamic> contentObject = JsonSerializer.Deserialize<Dictionary<string, dynamic>>(content)!;
 
-				var contentId = contentObject["id"].GetGuid();
-				var accessed = contentObject["accessed"].GetBoolean();
-				var gameContent = new AdditionalContent(contentId);
+				Guid contentId = contentObject["id"].GetGuid();
+				bool accessed = contentObject["accessed"].GetBoolean();
+				AdditionalContent gameContent = new(contentId);
 				AdditionalContentAccess access = new(gameContent, accessed);
 				accessedContent.Add(access);
 			}
