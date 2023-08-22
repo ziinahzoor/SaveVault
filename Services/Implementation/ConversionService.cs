@@ -32,10 +32,9 @@ public class ConversionService : IConversionService
 		return new PlatformSave(save.Game, save.User, PlatformData.GetPlatform(platform.ToString()!), save.Timestamp, additionalContent.ToList(), save.Data, save.Id);
 	}
 
-	public async Task<T> ConvertFromFile<T>(IFormFile file) where T : ISave
+	private async Task<T> ConvertFromString<T>(string file) where T : ISave
 	{
-		string saveString = SaveIOHelper.ReadFile(file);
-		string jsonString = SaveIOHelper.Serialize(saveString);
+		string jsonString = SaveIOHelper.Serialize(file);
 
 		Dictionary<string, dynamic> jsonObject = JsonSerializer.Deserialize<Dictionary<string, dynamic>>(jsonString)!;
 
@@ -51,28 +50,52 @@ public class ConversionService : IConversionService
 		User user = await _userService.GetById(userId);
 		Game game = await _gameService.GetById(gameId);
 		DateTime time = jsonObject["timestamp"].GetDateTime();
-		List<Guid> accessedContent = new();
-		foreach (dynamic content in jsonObject["accessed-content"].EnumerateArray())
-		{
-			accessedContent.Add(content.GetGuid());
-		}
+
 		dynamic data = jsonObject["data"];
 
 		if (typeof(T) == typeof(PlatformSave))
 		{
 			PlatformData platform = PlatformData.GetPlatform(jsonObject["platform"].ToString());
 
+			List<Guid> accessedContent = new();
+
+			foreach (dynamic content in jsonObject["accessed-content"].EnumerateArray())
+			{
+				accessedContent.Add(content.GetGuid());
+			}
+
 			save = new PlatformSave(game, user, platform, time, accessedContent, data, saveId);
 		}
 		else
 		{
-			IEnumerable<AdditionalContentAccess> content = game.AdditionalContents.Select(a =>
-				new AdditionalContentAccess(a, accessedContent.Contains(a.Id))
-			);
+			List<AdditionalContentAccess> accessedContent = new();
 
-			save = new UniversalSave(game, user, time, content.ToList(), data, saveId);
+			foreach (var content in jsonObject["additional-content"].EnumerateArray())
+			{
+				Dictionary<string, dynamic> contentObject = JsonSerializer.Deserialize<Dictionary<string, dynamic>>(content)!;
+
+				var contentId = contentObject["id"].GetGuid();
+				var accessed = contentObject["accessed"].GetBoolean();
+				var gameContent = new AdditionalContent(contentId);
+				AdditionalContentAccess access = new(gameContent, accessed);
+				accessedContent.Add(access);
+			}
+
+			save = new UniversalSave(game, user, time, accessedContent, data, saveId);
 		}
 
 		return (T)System.Convert.ChangeType(save, typeof(T));
+	}
+
+	public async Task<T> ConvertFromFile<T>(IFormFile file) where T : ISave
+	{
+		string saveString = SaveIOHelper.ReadFile(file);
+		return await ConvertFromString<T>(saveString);
+	}
+
+	public async Task<T> ConvertFromFile<T>(MemoryStream file) where T : ISave
+	{
+		string saveString = SaveIOHelper.ReadFile(file);
+		return await ConvertFromString<T>(saveString);
 	}
 }
