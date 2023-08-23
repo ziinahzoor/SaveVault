@@ -5,6 +5,8 @@ using SaveVault.Repositories;
 using SaveVault.Repositories.Implementation;
 using SaveVault.Services;
 using SaveVault.Services.Implementation;
+using RabbitMQ.Client;
+
 
 Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", "save-vault-gac.json");
 
@@ -27,6 +29,7 @@ builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<IConversionService, ConversionService>();
 builder.Services.AddScoped<IUploadService, UploadService>();
 builder.Services.AddScoped<IDownloadService, DownloadService>();
+builder.Services.AddScoped<IPublishService, PublishService>();
 
 builder.Services.AddScoped<IUploadRepository, UploadRepository>();
 builder.Services.AddScoped<IDownloadRepository, DownloadRepository>();
@@ -35,6 +38,19 @@ builder.Services.AddScoped<IGameRepository, GameRepository>();
 builder.Services.AddScoped<IFirebaseRepository, FirebaseRepository>();
 builder.Services.AddSingleton(provider => FirestoreDb.Create("save-vault"));
 builder.Services.AddSingleton(provider => StorageClient.Create());
+
+builder.Services.AddSingleton(factory =>
+{
+	ConnectionFactory connectionFactory = new() { HostName = "localhost" };
+	return connectionFactory.CreateConnection();
+});
+
+builder.Services.AddSingleton(provider =>
+{
+	IConnection connection = provider.GetRequiredService<IConnection>();
+	return connection.CreateModel();
+});
+
 
 WebApplication app = builder.Build();
 
